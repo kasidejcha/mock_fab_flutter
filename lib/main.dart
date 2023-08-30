@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import "dart:developer";
+import 'package:http/http.dart' as http;
 
 void main(){
   runApp(MyApp());
@@ -22,7 +25,7 @@ class Home extends StatefulWidget{
 }
 
 class _HomeState extends State<Home> {
- 
+  var client = http.Client();
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -30,6 +33,19 @@ class _HomeState extends State<Home> {
              title: Text("Speed Dial Floating Action Menu"),
              backgroundColor: Colors.deepOrangeAccent,
           ),
+          body: IconButton(icon: Icon(Icons.volume_down),
+          onPressed: () async {
+            var response = await client.post(Uri.parse("https://demo-tsb-web.onlineasset.co.th/api/client/auth/login"),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, dynamic>{
+                'email': "mizterbasoo@gmail.com",
+                'password': "As123456-"
+              }));
+            var result = jsonDecode(response.body);
+            print(result);
+          },),
           floatingActionButton: SpeedDial(
             icon: Icons.menu, //icon on Floating action button
             activeIcon: Icons.close, //icon when menu is expanded on button
@@ -56,7 +72,9 @@ class _HomeState extends State<Home> {
                 foregroundColor: Colors.white,
                 label: 'First Menu Child',
                 labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => print('FIRST CHILD'),
+                onTap: () => {
+                  
+                },
                 onLongPress: () => print('FIRST CHILD LONG PRESS'),
               ),
               SpeedDialChild(
@@ -83,7 +101,6 @@ class _HomeState extends State<Home> {
             ],
           ),
 
-          body: Container()
        );
   }
 }
